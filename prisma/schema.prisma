@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @db.VarChar(100) @unique
+  password String
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId String  @unique
+  review Review[]
+  favoriteMovie FavoriteMovie[]
+  favoriteTvShow FavoriteTvShow[]
+  historyRecord HistoryRecord[]
+}
+model Profile {
+  id String @id @default(uuid())
+  username String @db.VarChar(200)
+  avatar Avatar @relation(fields: [avatarId],references: [id])
+  avatarId String
+  about String @db.VarChar(2000)
+  user User?
+}
+
+model Avatar {
+  id String @id @default(uuid())
+  name String @db.VarChar(100)
+  url String @db.VarChar(100)
+  profile Profile[]
+}
+
+model Review {
+  id String @id @default(uuid())
+  created_at DateTime @default(now())
+  author User @relation(fields: [author_id],references: [id])
+  author_id String
+  review String @db.VarChar(1000)
+  shows_id String @db.VarChar(100)
+  show_title String
+}
+
+model FavoriteMovie {
+  id String @id @default(uuid())
+  movie_id String  @db.VarChar(100)
+  movie_title String @db.VarChar(100)
+  movie_poster_id String
+  user User @relation(fields: [user_id],references: [id])
+  user_id String
+}
+
+model FavoriteTvShow {
+  id String @id @default(uuid())
+  tvShow_id String  @db.VarChar(100)
+  tvShow_title String @db.VarChar(100)
+  tvShow_poster_id String
+  user User @relation(fields: [user_id],references: [id])
+  user_id String
+}
+
+model Activity {
+  id Int @id @default(autoincrement())
+  name String
+  historyRecord HistoryRecord[]
+}
+
+model HistoryRecord {
+  id String @id @default(uuid())
+  commit DateTime @default(now())
+  activity Activity @relation(fields: [activity_id],references: [id])
+  activity_id Int
+  user User @relation(fields: [user_id],references: [id])
+  user_id String
+  detail Json
+}
