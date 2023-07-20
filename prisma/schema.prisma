@@ -33,7 +33,7 @@ model Profile {
 model Avatar {
   id String @id @default(uuid())
   name String @db.VarChar(100)
-  url String @db.VarChar(100)
+  url String @db.VarChar(200)
   profile Profile[]
 }
 

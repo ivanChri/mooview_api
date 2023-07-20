@@ -20,12 +20,9 @@ export class AuthService {
         profile: {
           create:{
             username:data.email,
-            about:`about test`,
+            about:``,
             avatar:{
-              create:{
-                 name:'test avatar',
-                 url:'test avatar url'
-              }
+              connect:{id:`avatar_1`}
             },
           },
         }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Avatar` MODIFY `url` VARCHAR(200) NOT NULL;

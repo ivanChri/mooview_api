@@ -19,7 +19,7 @@ export class UserService {
        include:{
         favoriteMovie:{
           select:{
-            id:false,
+            id:true,
             movie_id:true,
             movie_title:true,
             movie_poster_id:true
@@ -27,7 +27,7 @@ export class UserService {
         },
         favoriteTvShow:{
           select:{
-            id:false,
+            id:true,
             tvShow_id:true,
             tvShow_title:true,
             tvShow_poster_id:true
@@ -35,7 +35,7 @@ export class UserService {
         },
         review:{
           select:{
-            id:false,
+            id:true,
             created_at:true,
             show_title:true,
             shows_id:true,
@@ -53,7 +53,7 @@ export class UserService {
         }
        }
       })
-      //delete user.password
+      delete user.password
       delete user.email
       return {
         user
