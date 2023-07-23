@@ -34,7 +34,7 @@ export class AuthController {
     delete result.token
     return result
    }
-   @Patch('forget-password')
+   @Patch('password')
    async changePassword(@Body() AuthDto:authDto){
      return await this.authService.changePassword(AuthDto)
    }

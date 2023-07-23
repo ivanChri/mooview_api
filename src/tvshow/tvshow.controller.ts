@@ -8,28 +8,49 @@ import {
  Delete,
  Param,
  UseGuards,
- ParseUUIDPipe
+ ParseUUIDPipe,
+ BadRequestException
 } from "@nestjs/common";
-import { JwtAuthGuard } from "src/utils/passport/guard/jwt-auth.guard";
+import { JwtAuthGuard } from "../utils/passport/guard/jwt-auth.guard";
 import { TvshowService } from "./tvshow.service";
 import { TvshowDto } from "./tvshow.dto";
+import { HistoryRecordService } from "../utils/history/history.service";
 @UseGuards(JwtAuthGuard)
 @Controller('tvshow')
 export class TvshowController {
-  constructor(private tvshowService:TvshowService){}
+  constructor(
+   private tvshowService:TvshowService,
+   private historyRecordService:HistoryRecordService   
+  ){}
   @Get()
   async getTvShow(
     @Query('tvshowId') tvshowId:string,
     @Query('userId',ParseUUIDPipe) userId:string
   ){
+    if(!tvshowId) throw new BadRequestException(`tvshow id must not empty`)
     return await this.tvshowService.getTvShow(tvshowId,userId)
   }
   @Post()
   async addTvShow(@Body() tvshowDto:TvshowDto){
-    return await this.tvshowService.addTvShow(tvshowDto)
+    const result = await this.tvshowService.addTvShow(tvshowDto)
+    await this.historyRecordService.createShowsHistory({
+      userId:tvshowDto.userId,
+      showsId:tvshowDto.tvShowId,
+      showsTitle:tvshowDto.tvShowTitle,
+      activityId:10
+    })
+    return result
   }
   @Delete(':id')
   async deleteTvShow(@Param('id',ParseUUIDPipe) id:string){
-    return await this.tvshowService.deleteTvShow(id)
+    const result = await this.tvshowService.deleteTvShow(id)
+    await this.historyRecordService.createShowsHistory({
+      userId:result.tvshow.user_id,
+      showsId:result.tvshow.id,
+      showsTitle:result.tvshow.tvShow_title,
+      activityId:11
+    })
+    delete result.tvshow
+    return result
   }
 }

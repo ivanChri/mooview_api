@@ -58,6 +58,10 @@ describe("user service",() => {
     })
     await expect(updateUser).rejects.toBeInstanceOf(ForbiddenException)
   })
+  it("should not able to get user data if user id is not found",async () => {
+    const getUser = userService.getUser("a83d9a19-b459-454d-9d1c-4b78509f6d88")
+    await expect(getUser).rejects.toBeInstanceOf(ForbiddenException)
+  })
   it("should not able to delete history record if user id is not valid",async () => {
     const deleteHistory = userService.deleteHistory("false user id")
     await expect(deleteHistory).rejects.toBeInstanceOf(ForbiddenException)

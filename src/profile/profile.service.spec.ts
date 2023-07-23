@@ -3,7 +3,7 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { Test,TestingModule } from "@nestjs/testing";
 import { ProfileService } from "./profile.service";
 import { ProfileRepository } from "./profile.repository";
-import { NotFoundException } from "@nestjs/common"
+import { NotFoundException,ForbiddenException } from "@nestjs/common"
 import { ProfileUpdateDto } from './profile.dto';
 describe("profile service",() => {
   let profileService:ProfileService
@@ -72,5 +72,14 @@ describe("profile service",() => {
     profileRepository.getProfile.mockResolvedValueOnce(null)
     const getProfile = profileService.getProfile("false profile id")
     await expect(getProfile).rejects.toBeInstanceOf(NotFoundException)
+  })
+  it("should not able to edit review if user id is not valid",async () => {
+    profileRepository.getProfile.mockResolvedValueOnce(null)
+    const editProfile = profileService.editProfile("false profile id ",{
+      about: "test about",
+      username: "test username",
+      avatarId:"test avatar id"
+     })
+    await expect(editProfile).rejects.toBeInstanceOf(ForbiddenException)
   })
 })

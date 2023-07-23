@@ -39,7 +39,8 @@ export class UserService {
             created_at:true,
             show_title:true,
             shows_id:true,
-            review:true
+            review:true,
+            author_id:true
           }
         },
         historyRecord:{
@@ -53,15 +54,15 @@ export class UserService {
         }
        }
       })
+      if(!user) throw new ForbiddenException(`Credentials is not valid`)
       delete user.password
-      delete user.email
       return {
         user
       }
     } catch (error) {
-       throw error
-    }
+     throw error
   }
+ }
   async update(id:string,data:userUpdateDto){
     try {
       const user = await this.userRepository.findUser({

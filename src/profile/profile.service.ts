@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable,NotFoundException } from "@nestjs/common";
+import { Injectable,NotFoundException,ForbiddenException} from "@nestjs/common";
 import { ProfileRepository } from "./profile.repository";
 import { ProfileUpdateDto } from "./profile.dto";
 @Injectable()
@@ -40,7 +40,8 @@ export class ProfileService {
         },
         avatar:{
           select:{
-             name:true
+            name:true,
+            url:true
           }
         }
       }
@@ -56,6 +57,12 @@ export class ProfileService {
   }
   async editProfile(id:string,data:ProfileUpdateDto){
     try {
+     const profile = await this.profileRepository.getProfile({
+       where:{
+         id
+       }
+     })
+     if(!profile) throw new ForbiddenException(`Credentials is not valid`)
      const updatedData:{
         username?:string,
         avatarId?:string,

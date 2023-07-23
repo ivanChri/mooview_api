@@ -1,14 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,NotFoundException,BadRequestException } from "@nestjs/common";
 import { ReviewRepository } from "./review.repository";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { ReviewDto, UpdateReviewDto } from "./review.dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 @Injectable()
 export class ReviewService {
   constructor(
     private reviewRepository:ReviewRepository,
-    private historyRecordService:HistoryRecordService
   ){}
   async getReview(showId:string){
     try {
@@ -55,13 +53,6 @@ export class ReviewService {
           review:data.review,
         }
       })
-      await this.historyRecordService.createReviewHistory({
-        userId:data.userId,
-        review:data.review,
-        activityId:12,
-        showsId:data.showId,
-        showsTitle:data.showTitle
-      })
       return {
         message:`success create review`
       }
@@ -90,16 +81,9 @@ export class ReviewService {
             review:data.review
           }
         })
-        await this.historyRecordService.createReviewHistory({
-          userId:review.author_id,
-          reviewId:review.id,
-          review:review.review,
-          activityId:13,
-          showsId:review.shows_id,
-          showsTitle:review.show_title
-        })
         return {
-          message:`update success`
+          message:`update success`,
+          review
         }
      } catch (error) {
         throw error
@@ -113,21 +97,14 @@ export class ReviewService {
          }
        })
        if(!review) throw new NotFoundException(`review not found`)
-       await this.historyRecordService.createReviewHistory({
-         userId:review.author_id,
-         reviewId:review.id,
-         review:review.review,
-         activityId:14,
-         showsId:review.shows_id,
-         showsTitle:review.show_title
-       })
        await this.reviewRepository.deleteReview({
         where:{
            id
         }
        })
        return {
-         message:`delete success`
+         message:`delete success`,
+         review
        }
     } catch (error) {
         throw error

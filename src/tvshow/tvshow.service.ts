@@ -2,13 +2,11 @@
 import { Injectable,NotFoundException,BadRequestException } from "@nestjs/common";
 import { TvshowDto } from "./tvshow.dto";
 import { TvshowRepository } from "./tvshow.repository";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 @Injectable()
 export class TvshowService {
   constructor(
    private tvshowRepository:TvshowRepository,
-   private historyRecordService:HistoryRecordService 
   ){}
   async addTvShow(data:TvshowDto){
     try {
@@ -21,12 +19,6 @@ export class TvshowService {
             connect:{id:data.userId}
           },
         }
-      })
-      await this.historyRecordService.createShowsHistory({
-        userId:data.userId,
-        showsId:data.tvShowId,
-        showsTitle:data.tvShowTitle,
-        activityId:10
       })
       return {
         message:`tvshow successfully added`
@@ -71,19 +63,14 @@ export class TvshowService {
         }
       })
       if(!tvshow) throw new NotFoundException(`tvshow is not found`)
-      await this.historyRecordService.createShowsHistory({
-        userId:tvshow.user_id,
-        showsId:tvshow.id,
-        showsTitle:tvshow.tvShow_title,
-        activityId:11
-      })
       await this.tvshowRepository.deleteTvShow({
         where:{
           id
         }
       })
       return {
-        message:`delete success`
+        message:`delete success`,
+        tvshow
       }
     } catch (error) {
         throw error

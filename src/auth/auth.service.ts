@@ -47,7 +47,7 @@ export class AuthService {
         )
        const passwordCompare = await verify(user.password,data.password)
        if(!passwordCompare) throw new ForbiddenException(`Credentials incorrect`)
-       const payload = {email:user.profileId,sub:user.id}
+       const payload = {email:user.profileId,sub:user.sub}
        const token = await this.jwtService.signAsync(payload)
        delete user.password
        return {

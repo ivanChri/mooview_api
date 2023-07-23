@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { Test,TestingModule } from "@nestjs/testing";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { NotFoundException } from "@nestjs/common";
 import { MovieService } from "./movie.service";
 import { MovieRepository } from "./movie.repository";
@@ -10,7 +9,6 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 describe('Movie service',() => {
   let movieService:MovieService
   let movieRepository:DeepMocked<MovieRepository>
-  let historyRecordService:DeepMocked<HistoryRecordService>
   beforeEach(async () => {
     const module:TestingModule = await Test.createTestingModule({
       providers:[
@@ -19,15 +17,10 @@ describe('Movie service',() => {
           provide:MovieRepository,
           useValue:createMock<MovieRepository>()
         },
-        {
-          provide:HistoryRecordService,
-          useValue:createMock<HistoryRecordService>()
-        },
     ]
     }).compile()
     movieService = module.get<MovieService>(MovieService)
     movieRepository = module.get(MovieRepository)
-    historyRecordService = module.get(HistoryRecordService)
   })
   afterEach(() => {
     jest.clearAllMocks()
@@ -35,7 +28,6 @@ describe('Movie service',() => {
    it("should be define",() => {
     expect(movieService).toBeDefined()
     expect(movieRepository).toBeDefined()
-    expect(historyRecordService).toBeDefined()
    })
    it("should call addMovie method with expected params", async () => {
      const spyAddMovie = jest.spyOn(movieService,"addMovie")
@@ -53,7 +45,6 @@ describe('Movie service',() => {
     expect(addMovie.message).toBeDefined()
     expect(movieRepository.addMovie).toHaveBeenCalled()
     expect(movieRepository.addMovie).toHaveReturned()
-    expect(historyRecordService.createShowsHistory).toHaveBeenCalled()
    })
    it("should call getMovie method with expected params",async () => {
      const spyGetMovie = jest.spyOn(movieService,"getMovie")
@@ -94,9 +85,9 @@ describe('Movie service',() => {
     })
     const deleteMovie = await movieService.deleteMovie("test movie id")
     expect(deleteMovie.message).toBeDefined()
+    expect(deleteMovie.movie).toBeDefined()
     expect(movieRepository.getMovie).toBeCalled()
     expect(movieRepository.deleteMovie).toBeCalled()
-    expect(historyRecordService.createShowsHistory).toBeCalled()
     expect(movieRepository.deleteMovie).toHaveReturned()
    })
    it("should not able to add movie if user id is not valid",async () => {
@@ -109,7 +100,6 @@ describe('Movie service',() => {
       })
       await expect(createReview).rejects.toThrowError()
       expect(movieRepository.addMovie).toBeCalled()
-      expect(historyRecordService.createShowsHistory).toBeCalledTimes(0)
    })
    it("should not able to get movie data if user id is not valid",async () => {
     movieRepository.getMovie.mockResolvedValueOnce(null)
@@ -129,6 +119,5 @@ describe('Movie service',() => {
     await expect(deleteMovie).rejects.toBeInstanceOf(NotFoundException)
     expect(movieRepository.getMovie).toBeCalled()
     expect(movieRepository.deleteMovie).toBeCalledTimes(0)
-    expect(historyRecordService.createShowsHistory).toBeCalledTimes(0)
    })
 })

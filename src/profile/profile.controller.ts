@@ -8,7 +8,7 @@ import {
   UseGuards,
   ParseUUIDPipe 
 } from "@nestjs/common";
-import { JwtAuthGuard } from "src/utils/passport/guard/jwt-auth.guard";
+import { JwtAuthGuard } from "../utils/passport/guard/jwt-auth.guard";
 import { ProfileService } from "./profile.service";
 import { ProfileUpdateDto } from "./profile.dto";
 @Controller('profile')

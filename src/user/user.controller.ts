@@ -9,7 +9,7 @@ import {
   ParseUUIDPipe,
   Delete
 } from "@nestjs/common";
-import { JwtAuthGuard } from "src/utils/passport/guard/jwt-auth.guard";
+import { JwtAuthGuard } from "../utils/passport/guard/jwt-auth.guard";
 import { UserService } from "./user.service";
 import { userUpdateDto } from "./user.dto";
 @UseGuards(JwtAuthGuard)

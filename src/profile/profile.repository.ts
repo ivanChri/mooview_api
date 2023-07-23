@@ -8,7 +8,7 @@ export class ProfileRepository{
  async getProfile(
   params:{
     where:Prisma.ProfileWhereUniqueInput,
-    include:Prisma.ProfileInclude
+    include?:Prisma.ProfileInclude
   }):Promise<Profile>{
    const { where,include } = params
    return await this.prisma.profile.findUnique({

@@ -4,13 +4,11 @@ import { Test,TestingModule } from "@nestjs/testing";
 import { ReviewDto,UpdateReviewDto} from './review.dto';
 import { ReviewService } from "./review.service";
 import { ReviewRepository } from "./review.repository";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { NotFoundException } from "@nestjs/common";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 describe("review service",() => {
  let reviewService:ReviewService
  let reviewRepository:DeepMocked<ReviewRepository>
- let historyRecordService:DeepMocked<HistoryRecordService>
  beforeEach(async () => {
   const module:TestingModule = await Test.createTestingModule({
     providers:[
@@ -19,15 +17,10 @@ describe("review service",() => {
        provide:ReviewRepository,
        useValue:createMock<ReviewRepository>()
       },
-      {
-       provide:HistoryRecordService,
-       useValue:createMock<HistoryRecordService>()
-      }
     ]
    }).compile()
    reviewService = module.get<ReviewService>(ReviewService)
    reviewRepository = module.get(ReviewRepository)
-   historyRecordService = module.get(HistoryRecordService)
  })
  afterEach(() => {
   jest.clearAllMocks()
@@ -35,7 +28,6 @@ describe("review service",() => {
  it("should be define",() => {
    expect(reviewService).toBeDefined()
    expect(reviewRepository).toBeDefined()
-   expect(historyRecordService).toBeDefined()
  })
  it("should call createReview method with expected params",async () => {
   const spyCreateReview = jest.spyOn(reviewService,"createReview")
@@ -46,14 +38,13 @@ describe("review service",() => {
  it("should able to create review",async () => {
     const createReview = await reviewService.createReview({
       showId: "test id",
-      userId: "test user id",
       showTitle: "test title",
-      review: "test review"
+      review: "test review",
+      userId:"test user id"
     })
     expect(createReview.message).toBeDefined()
     expect(reviewRepository.createReview).toHaveBeenCalled()
     expect(reviewRepository.createReview).toHaveReturned()
-    expect(historyRecordService.createReviewHistory).toHaveBeenCalled()
  })
  it("should call getReview method with expected params",async () => {
   const spyGetReview = jest.spyOn(reviewService,"getReview")
@@ -88,10 +79,10 @@ describe("review service",() => {
  it("should able to delete review",async () => {
   const deleteReview = await reviewService.deleteReview("test id")
   expect(deleteReview.message).toBeDefined()
+  expect(deleteReview.review).toBeDefined()
   expect(reviewRepository.getReviewById).toBeCalled()
   expect(reviewRepository.deleteReview).toBeCalled()
   expect(reviewRepository.deleteReview).toHaveReturned()
-  expect(historyRecordService.createReviewHistory).toBeCalled()
  })
  it("should call editReview method with expected params",async () => {
   const spyEditReview = jest.spyOn(reviewService,"editReview")
@@ -113,9 +104,9 @@ describe("review service",() => {
     review:"test review update"
   })
   expect(editReview.message).toBeDefined()
+  expect(editReview.review).toBeDefined()
   expect(reviewRepository.getReviewById).toBeCalled()
   expect(reviewRepository.editReview).toBeCalled()
-  expect(historyRecordService.createReviewHistory).toBeCalled()
  })
  it("should throw not found exception if no review match with shows id",async () => {
   reviewRepository.getReview.mockResolvedValueOnce([])
@@ -127,13 +118,12 @@ describe("review service",() => {
     reviewRepository.createReview.mockImplementationOnce(() => Promise.reject(PrismaClientKnownRequestError))
     const createReview = reviewService.createReview({
       showId: "test id",
-      userId: "false user id",
       showTitle: "test title",
-      review: "test review"
+      review: "test review",
+      userId:"false user id"
     })
     await expect(createReview).rejects.toThrowError()
     expect(reviewRepository.createReview).toBeCalled()
-    expect(historyRecordService.createReviewHistory).toBeCalledTimes(0)
   })
   it("should not able to edit review if review id is not valid",async () => {
     reviewRepository.getReviewById.mockResolvedValueOnce(null)
@@ -143,7 +133,6 @@ describe("review service",() => {
     await expect(editReview).rejects.toBeInstanceOf(NotFoundException)
     expect(reviewRepository.getReviewById).toBeCalled()
     expect(reviewRepository.editReview).toBeCalledTimes(0)
-    expect(historyRecordService.createReviewHistory).toBeCalledTimes(0)
   })
   it("should not able to delete review if user id is not valid",async () => {
     reviewRepository.getReviewById.mockResolvedValueOnce(null)
@@ -151,6 +140,5 @@ describe("review service",() => {
     await expect(deleteReview).rejects.toBeInstanceOf(NotFoundException)
     expect(reviewRepository.getReviewById).toBeCalled()
     expect(reviewRepository.editReview).toBeCalledTimes(0)
-    expect(historyRecordService.createReviewHistory).toBeCalledTimes(0)
   })
 })

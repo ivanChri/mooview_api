@@ -2,13 +2,11 @@
 import { Injectable,NotFoundException,BadRequestException } from "@nestjs/common";
 import { MovieRepository } from "./movie.repository";
 import { MovieDto } from "./movie.dto";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 @Injectable()
 export class MovieService {
   constructor(
     private movieRepository:MovieRepository,
-    private historyRecordService:HistoryRecordService
   ){}
   async addMovie(data:MovieDto){
     try {
@@ -21,12 +19,6 @@ export class MovieService {
             connect:{id:data.userId}
           }
         }
-      })
-      await this.historyRecordService.createShowsHistory({
-        userId:data.userId,
-        showsId:data.movieId,
-        showsTitle:data.movieTitle,
-        activityId:8
       })
       return {
         message:`movie successfully added`
@@ -46,11 +38,15 @@ export class MovieService {
         where:{
             AND:[
               {
-                movie_id:movieId
+                movie_id:{
+                  equals:movieId
+                }
               },
               {
-                user_id:userId
-              }
+                user_id:{
+                  equals:userId
+                }
+              },
             ]
         }
       })
@@ -71,19 +67,14 @@ export class MovieService {
           }
         })
         if(!movie) throw new NotFoundException(`movie is not found`)
-        await this.historyRecordService.createShowsHistory({
-          userId:movie.user_id,
-          showsId:movie.id,
-          showsTitle:movie.movie_title,
-          activityId:9
-        })
         await this.movieRepository.deleteMovie({
           where:{
             id
           }
         })
         return {
-            message:`delete success`
+          message:`delete success`,
+          movie
         }
     } catch (error) {
         throw error

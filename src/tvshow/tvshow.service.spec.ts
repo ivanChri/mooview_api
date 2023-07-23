@@ -3,14 +3,12 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest';
 import { Test,TestingModule } from "@nestjs/testing";
 import { TvshowRepository } from "./tvshow.repository";
 import { TvshowService } from "./tvshow.service";
-import { HistoryRecordService } from "../utils/history/history.service";
 import { NotFoundException } from "@nestjs/common";
 import { TvshowDto } from './tvshow.dto';
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 describe("tvshow service",() => {
   let tvshowService:TvshowService
   let tvshowRepository:DeepMocked<TvshowRepository>
-  let historyRecordService:DeepMocked<HistoryRecordService>
   beforeEach(async () => {
     const module:TestingModule = await Test.createTestingModule({
       providers:[
@@ -19,15 +17,10 @@ describe("tvshow service",() => {
           provide:TvshowRepository,
           useValue:createMock<TvshowRepository>()
         },
-        {
-          provide:HistoryRecordService,
-          useValue:createMock<HistoryRecordService>()
-        }
       ]
     }).compile()
     tvshowService = module.get<TvshowService>(TvshowService)
     tvshowRepository = module.get(TvshowRepository)
-    historyRecordService = module.get(HistoryRecordService)
   })
   afterEach(() => {
     jest.clearAllMocks()
@@ -35,7 +28,6 @@ describe("tvshow service",() => {
   it("should be define",() => {
     expect(tvshowService).toBeDefined()
     expect(tvshowRepository).toBeDefined()
-    expect(historyRecordService).toBeDefined()
   })
   it("should call addTvShow method with expected params", async () => {
     const spyAddTvShow = jest.spyOn(tvshowService,"addTvShow")
@@ -52,7 +44,6 @@ describe("tvshow service",() => {
     })
     expect(addTvShow.message).toBeDefined()
     expect(tvshowRepository.addTvShow).toBeCalled()
-    expect(historyRecordService.createShowsHistory).toBeCalled()
   })
   it("should call getTvShow method with expected params", async () => {
     const spyGetTvShow = jest.spyOn(tvshowService,"getTvShow")
@@ -92,9 +83,9 @@ describe("tvshow service",() => {
     })
     const deleteTvShow = await tvshowService.deleteTvShow("test user id")
     expect(deleteTvShow.message).toBeDefined()
+    expect(deleteTvShow.tvshow).toBeDefined()
     expect(tvshowRepository.getTvShow).toBeCalled()
     expect(tvshowRepository.deleteTvShow).toBeCalled()
-    expect(historyRecordService.createShowsHistory).toBeCalled()
   })
   it("should not able to add tvshow if user id is not valid",async () => {
     tvshowRepository.addTvShow.mockImplementationOnce(() => Promise.reject(PrismaClientKnownRequestError))
@@ -106,7 +97,6 @@ describe("tvshow service",() => {
     })
     await expect(addTvShow).rejects.toThrowError()
     expect(tvshowRepository.addTvShow).toBeCalled()
-    expect(historyRecordService.createShowsHistory).toBeCalledTimes(0)
   })
   it("should not able to get tvshow data if user id is not valid",async () => {
     tvshowRepository.getTvShow.mockResolvedValueOnce(null)
@@ -126,6 +116,5 @@ describe("tvshow service",() => {
    await expect(deleteTvShow).rejects.toBeInstanceOf(NotFoundException)
    expect(tvshowRepository.getTvShow).toBeCalled()
    expect(tvshowRepository.deleteTvShow).toBeCalledTimes(0)
-   expect(historyRecordService.createShowsHistory).toBeCalledTimes(0)
  })
 })
