@@ -37,6 +37,8 @@ export class AuthController {
     res.set('Access-Control-Allow-Credentials', 'true');
     res.cookie('access_token',result.token,{
       httpOnly:true,
+      domain:this.configService.get("CLIENT_URL"),
+      sameSite:"lax"
     })
     delete result.token
     return result
