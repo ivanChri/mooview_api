@@ -5,6 +5,7 @@ import {
     Body,
     Delete,
     Res,
+    Req,
     Patch,
     UseGuards,
     Param,
@@ -12,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { authDto } from './auth.dto';
 import { JwtAuthGuard } from '../utils/passport/guard/jwt-auth.guard';
-import { Response } from 'express';
+import { Response,Request } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 @Controller('auth')
@@ -28,12 +29,14 @@ export class AuthController {
    @Post('login')
    async login(
     @Body() AuthDto:authDto, 
-    @Res({ passthrough: true }) res: Response)
-    {
+    @Res({ passthrough: true }) res: Response,
+    @Req() req:Request
+    ){
     const result = await this.authService.login(AuthDto)
+    res.set('Access-Control-Allow-Origin',req.headers.origin)
+    res.set('Access-Control-Allow-Credentials', 'true');
     res.cookie('access_token',result.token,{
       httpOnly:true,
-      domain:this.configService.get("CLIENT_URL")
     })
     delete result.token
     return result
