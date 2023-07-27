@@ -10,7 +10,10 @@ async function bootstrap() {
   app.use(cookieParser());
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  });
   app.useGlobalInterceptors(new responseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(

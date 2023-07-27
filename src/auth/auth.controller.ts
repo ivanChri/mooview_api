@@ -14,9 +14,13 @@ import { authDto } from './auth.dto';
 import { JwtAuthGuard } from '../utils/passport/guard/jwt-auth.guard';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
+import { ConfigService } from '@nestjs/config';
 @Controller('auth')
 export class AuthController {
-   constructor(private authService:AuthService){}
+   constructor(
+    private authService:AuthService,
+    private configService:ConfigService 
+   ){}
    @Post('register')
    async register(@Body() AuthDto:authDto) {
       return await this.authService.register(AuthDto)
@@ -29,7 +33,7 @@ export class AuthController {
     const result = await this.authService.login(AuthDto)
     res.cookie('access_token',result.token,{
       httpOnly:true,
-      sameSite:'lax',
+      domain:this.configService.get("CLIENT_URL")
     })
     delete result.token
     return result
@@ -44,7 +48,7 @@ export class AuthController {
     const result = await this.authService.logout(id)
     return res.clearCookie('access_token')
     .status(204)
-    .send({result})
+    .send(result)
     .end()
    }
 }
