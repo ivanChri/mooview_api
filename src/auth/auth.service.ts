@@ -1,17 +1,18 @@
 /* eslint-disable prettier/prettier */
 import { Injectable,ForbiddenException,NotFoundException } from '@nestjs/common';
-import{ hash,verify } from "argon2";
+import { hash,verify } from "argon2";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../user/user.repository';
-import { authDto } from './auth.dto';
+import { registerDto,loginDto,patchDto } from './auth.dto';
+import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
   constructor(
    private userRepository: UserRepository,
-   private jwtService: JwtService 
+   private jwtService: JwtService
   ){}
-  async register(data:authDto){
+  async register(data:registerDto){
     try{
       const hashPassword = await hash(data.password)
       await this.userRepository.createUser({
@@ -19,7 +20,7 @@ export class AuthService {
         password:hashPassword,
         profile: {
           create:{
-            username:data.email,
+            username:data.username,
             about:``,
             avatar:{
               connect:{id:`avatar_1`}
@@ -39,15 +40,33 @@ export class AuthService {
       throw error
     }
   }
-  async login(data:authDto){
+  async login(data:loginDto){
     try {
-       const user = await this.verifyUser(
-         data.email,
-         new ForbiddenException(`Credentials incorrect`)
-        )
+       const user = await this.userRepository.findUser({
+         where:{
+           email:{
+             equals:data.email
+           }
+          },
+          include:{
+            profile:{
+              select:{
+                sub:true,
+                username:true,
+                avatar:{
+                  select:{
+                    name:true,
+                    url:true
+                  }
+                }
+              }
+            }
+          }
+       })
+       if(!user) throw new ForbiddenException(`Credentials incorrect`)
        const passwordCompare = await verify(user.password,data.password)
        if(!passwordCompare) throw new ForbiddenException(`Credentials incorrect`)
-       const payload = {email:user.profileId,sub:user.sub}
+       const payload = {id:await uuidv4(),sub:user.sub}
        const token = await this.jwtService.signAsync(payload)
        delete user.password
        return {
@@ -63,7 +82,9 @@ export class AuthService {
     try {
       const user = await this.userRepository.findUser({
         where:{
-           id
+           id:{
+            equals:id
+           }
         }
       })
       if(!user) throw new ForbiddenException(`Credentials incorrect`)
@@ -74,30 +95,21 @@ export class AuthService {
        throw error
     }
   }
-  async verifyUser(email:string,exception:any){
+  async changePassword(data:patchDto){
     try {
       const user = await this.userRepository.findUser({
         where:{
-            email
+          email:{
+            equals:data.email
           },
-          include:{
-            profile:{
-            select:{
-                username:true,
-                avatar:true
+          profile:{
+            username:{
+              equals:data.username
             }
-            }
+          }
         }
       })
-      if(!user) throw  exception
-      return user
-    } catch (error) {
-       throw error
-    }
-  }
-  async changePassword(data:authDto){
-    try {
-      await this.verifyUser(data.email,new NotFoundException(`email is not found`))
+      if(!user) throw new NotFoundException(`user is not found`)
       const hashPassword = await hash(data.password)
       await this.userRepository.updateUser({
         where:{

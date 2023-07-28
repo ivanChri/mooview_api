@@ -150,25 +150,25 @@ describe("User e2e",() => {
       it("should able to logout",() => {
         return supertest(app.getHttpServer())
         .delete(`/auth/logout/${user_id}`)
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .expect(204)
       })
       it("should throw forbiden exception if user is not found",() => {
         return supertest(app.getHttpServer())
         .delete("/auth/logout/a83d9a19-b459-454d-9d1c-4b78509f6d88")
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .expect(403)
       })
       it("should throw bad request exception if id is not valid uuid",() => {
         return supertest(app.getHttpServer())
         .delete("/auth/logout/122")
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .expect(400)
       })
       it("should throw unauthorized exception if access_token is not valid",() => {
         return supertest(app.getHttpServer())
         .delete(`/auth/logout/${user_id}`)
-        .set("Cookie",`access_token=false token`)
+        .set("Authorization",`Bearer false token`)
         .expect(401)
       })
     })
@@ -195,7 +195,7 @@ describe("User e2e",() => {
       it("should able to edit username",() => {
         return supertest(app.getHttpServer())
         .patch(`/profile/${profile_id}`)
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({
           username:"new username"
         })
@@ -204,7 +204,7 @@ describe("User e2e",() => {
       it("should able to edit avatar",() => {
         return supertest(app.getHttpServer())
         .patch(`/profile/${profile_id}`)
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({
           avatarId:"avatar_2"
         })
@@ -213,7 +213,7 @@ describe("User e2e",() => {
       it("should able to edit about",() => {
         return supertest(app.getHttpServer())
         .patch(`/profile/${profile_id}`)
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({
           about:"new about"
         })
@@ -222,7 +222,7 @@ describe("User e2e",() => {
        it("should throw forbiden exception if profile is not found",() => {
         return supertest(app.getHttpServer())
         .patch("/profile/a83d9a19-b459-454d-9d1c-4b78509f6d88")
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({
           about:"new about"
         })
@@ -231,7 +231,7 @@ describe("User e2e",() => {
        it("should throw bad request exception if profile id is not valid uuid",() => {
         return supertest(app.getHttpServer())
         .patch("/profile/122")
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({
           about:"new about"
         })
@@ -240,14 +240,14 @@ describe("User e2e",() => {
        it("should throw bad request exception if body is empty",() => {
         return supertest(app.getHttpServer())
         .patch(`/profile/${access_token}`)
-        .set("Cookie",`access_token=${access_token}`)
+        .set("Authorization",`Bearer ${access_token}`)
         .send({})
         .expect(400)
        })
        it("should throw unauthorized exception if access_token is not valid",() => {
         return supertest(app.getHttpServer())
         .patch(`/profile/${profile_id}`)
-        .set("Cookie",`access_token=false token`)
+        .set("Authorization",`Bearer false token`)
         .send({
           about:"new about"
         })
@@ -260,25 +260,25 @@ describe("User e2e",() => {
         it("should able to get user",() => {
           return supertest(app.getHttpServer())
           .get(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(200)
         })
         it("should throw bad request exception if user id is not valid uuid",() => {
           return supertest(app.getHttpServer())
           .get("/user/122")
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(400)
         })
         it("should throw forbiden exception if user is not found",() => {
           return supertest(app.getHttpServer())
           .get("/user/a83d9a19-b459-454d-9d1c-4b78509f6d88")
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(403)
         })
         it("should throw unauthorized exception if access_token is not valid", () => {
           return supertest(app.getHttpServer())
           .get(`/user/${access_token}`)
-          .set("Cookie","access_token=false token")
+          .set("Authorization","Bearer false token")
           .expect(401)
         })
       })
@@ -292,14 +292,14 @@ describe("User e2e",() => {
         it("should able to update user password and email",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send(dto)
           .expect(200)
         })
         it("should able to update user email",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
             password:dto.password,
@@ -310,7 +310,7 @@ describe("User e2e",() => {
         it("should able to update user password",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
             password:dto.password,
@@ -321,7 +321,7 @@ describe("User e2e",() => {
         it("should throw forbiden exception if email is not valid",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:"false@gmail.com",
             password:dto.password,
@@ -332,7 +332,7 @@ describe("User e2e",() => {
         it("should throw forbiden exception if password is not valid",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
             password:"false password",
@@ -343,14 +343,14 @@ describe("User e2e",() => {
         it("should throw bad request exception if user id is not valid uuid",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/123`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .send(dto)
           .expect(400)
         })
         it("should throw unauthorized exception if access_token is not valid",() => {
           return supertest(app.getHttpServer())
           .patch(`/user/${user_id}`)
-          .set("Cookie",`access_token=false token`)
+          .set("Authorization",`Bearer false token`)
           .send(dto)
           .expect(401)
         })
@@ -359,25 +359,25 @@ describe("User e2e",() => {
         it("should able to delete history",() => {
           return supertest(app.getHttpServer())
           .delete(`/user/${user_id}`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(200)
         })
         it("should throw forbiden exception if user is not found",() => {
           return supertest(app.getHttpServer())
           .delete(`/user/a83d9a19-b459-454d-9d1c-4b78509f6d88`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(403)
         })
         it("should throw bad request exception if user id is not valid uuid",() => {
           return supertest(app.getHttpServer())
           .delete(`/user/123`)
-          .set("Cookie",`access_token=${access_token}`)
+          .set("Authorization",`Bearer ${access_token}`)
           .expect(400)
         })
         it("should throw unauthorized exception if access_token is not valid",() => {
           return supertest(app.getHttpServer())
           .delete(`/user/${user_id}`)
-          .set("Cookie",`access_token=false token`)
+          .set("Authorization",`Bearer false token`)
           .expect(401)
         })
       })

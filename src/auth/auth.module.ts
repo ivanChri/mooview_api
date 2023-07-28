@@ -12,7 +12,7 @@ imports:[
  JwtModule.registerAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-  secret: configService.get<string>('JWT_CONSTRAINT'),
+  secret:configService.get("JWT_CONSTRAINT"),
  }),
   inject: [ConfigService],
  }),

@@ -5,7 +5,6 @@ import { HttpExceptionFilter } from './utils/exeception/http.exeception';
 import { AppModule } from './app.module';
 import { PrismaService } from './utils/prisma/prisma.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
@@ -13,8 +12,6 @@ async function bootstrap() {
       origin: [process.env.CLIENT_URL, 'http://localhost:5173'],
     },
   });
-  app.set('trust proxy', 1);
-  app.use(cookieParser());
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
   app.useGlobalInterceptors(new responseInterceptor());

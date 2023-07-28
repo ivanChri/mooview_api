@@ -11,26 +11,29 @@ export class ReviewService {
   async getReview(showId:string){
     try {
        const reviews = await this.reviewRepository.getReview({
-          where:{
-            shows_id:showId
-          },
-          include:{
-            author:{
-              select:{
-                profile:{
-                  select:{
-                    id:true,
-                    username:true,
-                    avatar:{
-                      select:{
-                         name:true
-                      }
+        where: {
+          shows_id: showId
+        },
+        select: {
+          created_at:true,
+          review:true,
+          author:{
+            select:{
+              profile:{
+                select:{
+                  username:true,
+                  sub:true,
+                  avatar:{
+                    select:{
+                      name:true,
+                      url:true
                     }
                   }
                 }
               }
             }
-          },
+          } 
+        }
        })
        if(!reviews.length) throw new NotFoundException(`no review found for this show`)
        return {

@@ -17,12 +17,12 @@ export class ReviewRepository {
   async getReview(
   params:{
     where:Prisma.ReviewWhereInput,
-    include?:Prisma.ReviewInclude,
-  }):Promise<Review[]>{
-    const { where,include } = params
+    select:Prisma.ReviewSelect
+  }):Promise<any[]>{
+    const { where,select } = params
     return await this.prisma.review.findMany({
       where,
-      include
+      select
     })
   }
   async getReviewById(

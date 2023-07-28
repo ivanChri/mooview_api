@@ -14,9 +14,9 @@ import { ProfileUpdateDto } from "./profile.dto";
 @Controller('profile')
 export class ProfileController{
   constructor(private profileService:ProfileService){}
-  @Get(':id')
-  async getProfile(@Param('id',ParseUUIDPipe) id:string){
-    return await this.profileService.getProfile(id)
+  @Get(':sub')
+  async getProfile(@Param('sub',ParseUUIDPipe) sub:string){
+    return await this.profileService.getProfile(sub)
   }
   @UseGuards(JwtAuthGuard)
   @Patch(':id')

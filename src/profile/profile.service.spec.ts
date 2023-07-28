@@ -37,11 +37,12 @@ describe("profile service",() => {
   it("should able to get profile data",async () => {
     profileRepository.getProfile.mockResolvedValueOnce({
      id:"test profile id",
+     sub:"test sub",
      username:"test username",
      avatarId:"test avatar id",
      about:"test about"
     })
-    const getProfile = await profileService.getProfile("test profile id")
+    const getProfile = await profileService.getProfile("test sub id")
     expect(getProfile.message).toBeDefined()
     expect(getProfile.profile).toBeDefined()
     expect(profileRepository.getProfile).toBeCalled()
@@ -56,11 +57,12 @@ describe("profile service",() => {
   it("should able to edit profile",async () => {
     profileRepository.getProfile.mockResolvedValueOnce({
      id:"test profile id",
+     sub:"test sub",
      username:"test username",
      avatarId:"test avatar id",
      about:"test about"
     })
-    const editProfile = await profileService.editProfile("test review id ",{
+    const editProfile = await profileService.editProfile("test profile id ",{
      about: "test about",
      username: "test username",
      avatarId:"test avatar id"
@@ -70,12 +72,12 @@ describe("profile service",() => {
   })
   it("show throw not found exception if profile is not found",async () => {
     profileRepository.getProfile.mockResolvedValueOnce(null)
-    const getProfile = profileService.getProfile("false profile id")
+    const getProfile = profileService.getProfile("false sub id")
     await expect(getProfile).rejects.toBeInstanceOf(NotFoundException)
   })
   it("should not able to edit review if user id is not valid",async () => {
     profileRepository.getProfile.mockResolvedValueOnce(null)
-    const editProfile = profileService.editProfile("false profile id ",{
+    const editProfile = profileService.editProfile("false sub id ",{
       about: "test about",
       username: "test username",
       avatarId:"test avatar id"

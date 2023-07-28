@@ -5,11 +5,11 @@ import { ProfileUpdateDto } from "./profile.dto";
 @Injectable()
 export class ProfileService {
   constructor(private profileRepository:ProfileRepository){}
-  async getProfile(id:string){
+  async getProfile(sub:string){
     try {
      const profile =  await this.profileRepository.getProfile({
       where:{
-        id
+        sub
       },
       include:{
         user:{

@@ -12,12 +12,12 @@ export class UserRepository {
   }
   async findUser(
     params:{
-        where:Prisma.UserWhereUniqueInput,
+        where:Prisma.UserWhereInput,
         include?:Prisma.UserInclude
     }
   ):Promise<User> {
     const {where,include} = params
-    return await this.prisma.user.findUnique({
+    return await this.prisma.user.findFirst({
         where,
         include
     })

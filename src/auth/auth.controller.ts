@@ -4,55 +4,32 @@ import {
     Post,
     Body,
     Delete,
-    Res,
-    Req,
     Patch,
     UseGuards,
     Param,
     ParseUUIDPipe
 } from '@nestjs/common';
-import { authDto } from './auth.dto';
+import { registerDto,loginDto,patchDto} from './auth.dto';
 import { JwtAuthGuard } from '../utils/passport/guard/jwt-auth.guard';
-import { Response,Request } from 'express';
 import { AuthService } from './auth.service';
-import { ConfigService } from '@nestjs/config';
 @Controller('auth')
 export class AuthController {
-   constructor(
-    private authService:AuthService,
-    private configService:ConfigService 
-   ){}
+   constructor(private authService:AuthService){}
    @Post('register')
-   async register(@Body() AuthDto:authDto) {
-      return await this.authService.register(AuthDto)
+   async register(@Body() RegisterDto:registerDto) {
+      return await this.authService.register(RegisterDto)
    }
    @Post('login')
-   async login(
-    @Body() AuthDto:authDto, 
-    @Res({ passthrough: true }) res: Response,
-    @Req() req:Request
-    ){
-    const result = await this.authService.login(AuthDto)
-    res.set('Access-Control-Allow-Origin',req.headers.origin)
-    res.set('Access-Control-Allow-Credentials', 'true');
-    res.cookie('access_token',result.token,{
-      httpOnly:true,
-      sameSite:"lax"
-    })
-    delete result.token
-    return result
+   async login(@Body() LoginDto:loginDto){
+    return await this.authService.login(LoginDto)
    }
    @Patch('password')
-   async changePassword(@Body() AuthDto:authDto){
-     return await this.authService.changePassword(AuthDto)
+   async changePassword(@Body() PatchDto:patchDto){
+     return await this.authService.changePassword(PatchDto)
    }
    @UseGuards(JwtAuthGuard)
    @Delete('logout/:id')
-   async logout(@Res() res:Response,@Param('id',ParseUUIDPipe) id:string){
-    const result = await this.authService.logout(id)
-    return res.clearCookie('access_token')
-    .status(204)
-    .send(result)
-    .end()
+   async logout(@Param('id',ParseUUIDPipe) id:string){
+     return await this.authService.logout(id)
    }
 }
