@@ -4,7 +4,7 @@ import { hash,verify } from "argon2";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../user/user.repository';
-import { registerDto,loginDto,patchDto } from './auth.dto';
+import { authDto } from './auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
    private userRepository: UserRepository,
    private jwtService: JwtService
   ){}
-  async register(data:registerDto){
+  async register(data:authDto){
     try{
       const hashPassword = await hash(data.password)
       await this.userRepository.createUser({
@@ -40,12 +40,17 @@ export class AuthService {
       throw error
     }
   }
-  async login(data:loginDto){
+  async login(data:authDto){
     try {
        const user = await this.userRepository.findUser({
          where:{
            email:{
              equals:data.email
+           },
+           profile:{
+            username:{
+              equals:data.username
+            }
            }
           },
           include:{
@@ -95,7 +100,7 @@ export class AuthService {
        throw error
     }
   }
-  async changePassword(data:patchDto){
+  async changePassword(data:authDto){
     try {
       const user = await this.userRepository.findUser({
         where:{

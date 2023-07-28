@@ -33,7 +33,8 @@ describe("User e2e",() => {
   describe("auth",() => {
     const dto:authDto = {
      email:"test@gmail.com",
-     password:"test password"
+     password:"test password",
+     username:"test username"
     }
     describe("POST /auth/register",() => {
       it("should able to register",() => {
@@ -53,6 +54,17 @@ describe("User e2e",() => {
         .post("/auth/register")
         .send({
           email:"",
+          username:dto.username,
+          password:dto.password
+        })
+        .expect(400)
+      })
+      it("should throw bad request exception if username is empty",() => {
+        return supertest(app.getHttpServer())
+        .post("/auth/register")
+        .send({
+          email:dto.email,
+          username:"",
           password:dto.password
         })
         .expect(400)
@@ -62,6 +74,7 @@ describe("User e2e",() => {
         .post("/auth/register")
         .send({
           email:dto.email,
+          username:dto.username,
           password:""
         })
         .expect(400)
@@ -79,7 +92,8 @@ describe("User e2e",() => {
         .post("/auth/login")
         .send({
           email:"falseEmail@gmail.com",
-          password:dto.password
+          password:dto.password,
+          username:dto.username
         })
         .expect(403)
       })
@@ -88,7 +102,18 @@ describe("User e2e",() => {
         .post("/auth/login")
         .send({
           email:dto.email,
-          password:"false password"
+          password:"false password",
+          username:dto.username
+        })
+        .expect(403)
+      })
+      it("should throw forbiden exception username is not valid",() => {
+        return supertest(app.getHttpServer())
+        .post("/auth/login")
+        .send({
+          email:dto.email,
+          password:dto.password,
+          username:"false username"
         })
         .expect(403)
       })
@@ -97,7 +122,8 @@ describe("User e2e",() => {
         .post("/auth/login")
         .send({
           email:"",
-          password:dto.password
+          password:dto.password,
+          username:dto.username
         })
         .expect(400)
       })
@@ -106,7 +132,18 @@ describe("User e2e",() => {
         .post("/auth/login")
         .send({
           email:dto.email,
-          password:""
+          password:"",
+          username:dto.username
+        })
+        .expect(400)
+      })
+      it("should throw bad request exception if username is empty",() => {
+        return supertest(app.getHttpServer())
+        .post("/auth/login")
+        .send({
+          email:dto.email,
+          password:dto.password,
+          username:""
         })
         .expect(400)
       })
@@ -123,7 +160,18 @@ describe("User e2e",() => {
         .patch("/auth/password")
         .send({
           email:"falseEmail@gmail.com",
-          password:dto.password
+          password:dto.password,
+          username:dto.username
+        })
+        .expect(404)
+      })
+      it("should throw not found exception if username is not found",() => {
+        return supertest(app.getHttpServer())
+        .patch("/auth/password")
+        .send({
+          email:dto.email,
+          password:dto.password,
+          username:"false username"
         })
         .expect(404)
       })
@@ -132,7 +180,8 @@ describe("User e2e",() => {
         .patch("/auth/password")
         .send({
           email:"",
-          password:dto.password
+          password:dto.password,
+          username:dto.username
         })
         .expect(400)
       })
@@ -141,7 +190,18 @@ describe("User e2e",() => {
         .patch("/auth/password")
         .send({
           email:dto.email,
-          password:""
+          password:"",
+          username:dto.username
+        })
+        .expect(400)
+      })
+      it("should throw bad request exception if username is empty",() => {
+        return supertest(app.getHttpServer())
+        .patch("/auth/password")
+        .send({
+          email:dto.email,
+          password:dto.password,
+          username:""
         })
         .expect(400)
       })

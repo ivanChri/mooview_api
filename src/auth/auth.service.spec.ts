@@ -33,6 +33,7 @@ describe("auth service",() => {
     const login = await authService.login({
      email:"test@gmail.com",
      password:"test password",
+     username:"test username"
     })
     expect(login.message).toBeDefined()
     expect(login.token).toBeDefined()
@@ -62,6 +63,7 @@ describe("auth service",() => {
     const login = authService.login({
       email:"false email",
       password:"test password",
+      username:"test username"
     })
     await expect(login).rejects.toBeInstanceOf(ForbiddenException)
   })
@@ -69,6 +71,15 @@ describe("auth service",() => {
     const login = authService.login({
       email:"test@gmail.com",
       password:"false password",
+      username:"test username"
+    })
+    await expect(login).rejects.toBeInstanceOf(ForbiddenException)
+  })
+  it("should not able to login if username is not valid",async () => {
+    const login = authService.login({
+      email:"test@gmail.com",
+      password:"test password",
+      username:"false username"
     })
     await expect(login).rejects.toBeInstanceOf(ForbiddenException)
   })
