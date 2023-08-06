@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { IsString,IsNotEmpty,IsUUID } from "class-validator";
+import { IsString,IsNotEmpty,IsUUID,IsInt } from "class-validator";
 export class MovieDto {
-  @IsString()
+  @IsInt()
   @IsNotEmpty()
-  movieId:string
+  movieId:number
   @IsString()
   @IsNotEmpty()
   movieTitle:string

@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { IsString,IsNotEmpty,IsUUID} from "class-validator";
+import { IsString,IsNotEmpty,IsUUID,IsInt} from "class-validator";
 export class TvshowDto {
-    @IsString()
+    @IsInt()
     @IsNotEmpty()
-    tvShowId:string
+    tvShowId:number
     @IsString()
     @IsNotEmpty()
     tvShowTitle:string

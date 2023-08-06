@@ -51,18 +51,18 @@ model Review {
 
 model FavoriteMovie {
   id String @id @default(uuid())
-  movie_id String  @db.VarChar(100)
-  movie_title String @db.VarChar(100)
-  movie_poster_id String
+  movie_id Int
+  title String @db.VarChar(100)
+  poster_path String
   user User @relation(fields: [user_id],references: [id])
   user_id String
 }
 
 model FavoriteTvShow {
   id String @id @default(uuid())
-  tvShow_id String  @db.VarChar(100)
-  tvShow_title String @db.VarChar(100)
-  tvShow_poster_id String
+  tv_id Int
+  title String @db.VarChar(100)
+  poster_path String
   user User @relation(fields: [user_id],references: [id])
   user_id String
 }

@@ -24,7 +24,7 @@ export class MovieController {
   ){}
   @Get()
   async getMovie(
-   @Query('movieId') movieId:string,
+   @Query('movieId') movieId:number,
    @Query('userId',ParseUUIDPipe) userId:string
   ){
     if(!movieId) throw new BadRequestException("movieId is must not empty")
@@ -47,7 +47,7 @@ export class MovieController {
     await this.historyRecordService.createShowsHistory({
       userId:result.movie.user_id,
       showsId:result.movie.movie_id,
-      showsTitle:result.movie.movie_title,
+      showsTitle:result.movie.title,
       activityId:9
     })
     delete result.movie

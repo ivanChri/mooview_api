@@ -12,9 +12,9 @@ export class TvshowService {
     try {
       await this.tvshowRepository.addTvShow({
         data:{
-          tvShow_id:data.tvShowId,
-          tvShow_title:data.tvShowTitle,
-          tvShow_poster_id:data.posterId,
+          tv_id:data.tvShowId,
+          title:data.tvShowTitle,
+          poster_path:data.posterId,
           user:{
             connect:{id:data.userId}
           },
@@ -32,13 +32,13 @@ export class TvshowService {
       throw error
     }
   }
-  async getTvShow(tvshowId:string,userId:string){
+  async getTvShow(tvshowId:number,userId:string){
     try {
        const tvshow = await this.tvshowRepository.getTvShow({
          where:{
            AND:[
             {
-              tvShow_id:tvshowId
+              tv_id:tvshowId
             },
             {
               user_id:userId

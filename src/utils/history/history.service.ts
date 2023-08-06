@@ -8,7 +8,7 @@ export class HistoryRecordService {
   async createShowsHistory(
    data:{
     userId:string,
-    showsId:string,
+    showsId:number,
     showsTitle:string,
     activityId:number
   }){

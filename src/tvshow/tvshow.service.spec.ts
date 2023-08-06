@@ -37,7 +37,7 @@ describe("tvshow service",() => {
    })
   it("should able to add tvshow",async () => {
     const addTvShow = await tvshowService.addTvShow({
-      tvShowId:"test tvshow id",
+      tvShowId:123,
       tvShowTitle: "test tvshow title",
       posterId: "test tvshow poster",
       userId: "test user id"
@@ -48,7 +48,7 @@ describe("tvshow service",() => {
   it("should call getTvShow method with expected params", async () => {
     const spyGetTvShow = jest.spyOn(tvshowService,"getTvShow")
     const param = {
-      tvshowId:"test tvshow id",
+      tvshowId:123,
       userId:"test user id"
     }
     tvshowService.getTvShow(param.tvshowId,param.userId)
@@ -57,12 +57,12 @@ describe("tvshow service",() => {
   it("should able to get tvshow data",async () => {
     tvshowRepository.getTvShow.mockResolvedValueOnce({
       id:"test user id",
-      tvShow_id:"test tvshow id",
-      tvShow_title:"test tvshow title",
-      tvShow_poster_id:"test tvshow poster",
+      tv_id:123,
+      title:"test tvshow title",
+      poster_path:"test tvshow poster",
       user_id:"test user id"
     })
-    const getTvShow = await tvshowService.getTvShow("test tvshow id","test user id")
+    const getTvShow = await tvshowService.getTvShow(123,"test user id")
     expect(getTvShow.message).toBeDefined()
     expect(getTvShow.tvshow).toBeDefined()
     expect(tvshowRepository.getTvShow).toBeCalled()
@@ -76,9 +76,9 @@ describe("tvshow service",() => {
   it("should able delete tvshow data",async () => {
     tvshowRepository.deleteTvShow.mockResolvedValueOnce({
       id:"test user id",
-      tvShow_id:"test tvshow id",
-      tvShow_title:"test tvshow title",
-      tvShow_poster_id:"test tvshow poster",
+      tv_id:123,
+      title:"test tvshow title",
+      poster_path:"test tvshow poster",
       user_id:"test user id"
     })
     const deleteTvShow = await tvshowService.deleteTvShow("test user id")
@@ -90,7 +90,7 @@ describe("tvshow service",() => {
   it("should not able to add tvshow if user id is not valid",async () => {
     tvshowRepository.addTvShow.mockImplementationOnce(() => Promise.reject(PrismaClientKnownRequestError))
     const addTvShow = tvshowService.addTvShow({
-     tvShowId:"test tvshow id",
+     tvShowId:123,
      tvShowTitle: "test tvshow title",
      posterId: "test tvshow poster",
      userId: "false user id"
@@ -100,13 +100,13 @@ describe("tvshow service",() => {
   })
   it("should not able to get tvshow data if user id is not valid",async () => {
     tvshowRepository.getTvShow.mockResolvedValueOnce(null)
-    const getTvShow = tvshowService.getTvShow("test tvshow id","false user id")
+    const getTvShow = tvshowService.getTvShow(111,"false user id")
     await expect(getTvShow).rejects.toBeInstanceOf(NotFoundException)
     expect(tvshowRepository.getTvShow).toBeCalled()
   })
   it("should not able to get tvshow data if tvshow id is not valid",async () => {
     tvshowRepository.getTvShow.mockResolvedValueOnce(null)
-    const getTvShow = tvshowService.getTvShow("false tvshow id","test user id")
+    const getTvShow = tvshowService.getTvShow(111,"test user id")
     await expect(getTvShow).rejects.toBeInstanceOf(NotFoundException)
     expect(tvshowRepository.getTvShow).toBeCalled()
   })

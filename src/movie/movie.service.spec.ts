@@ -37,7 +37,7 @@ describe('Movie service',() => {
    })
    it("should able to add movie",async () => {
     const addMovie = await movieService.addMovie({
-      movieId: "test movie id",
+      movieId: 123,
       movieTitle: "test movie title",
       posterId: "test movie poster",
       userId: "false user id"
@@ -48,8 +48,8 @@ describe('Movie service',() => {
    })
    it("should call getMovie method with expected params",async () => {
      const spyGetMovie = jest.spyOn(movieService,"getMovie")
-     const param:{movieId:string,userId:string} = {
-       movieId:"test movie id",
+     const param:{movieId:number,userId:string} = {
+       movieId:123,
        userId:"test user id"
      }
      movieService.getMovie(param.movieId,param.userId)
@@ -58,12 +58,12 @@ describe('Movie service',() => {
    it("should able to get movie data",async () => {
     movieRepository.getMovie.mockResolvedValueOnce({
       id:"test movie id",
-      movie_id: "test movie id",
-      movie_title: "test movie title",
-      movie_poster_id: "test movie poster",
+      movie_id: 123,
+      title: "test movie title",
+      poster_path: "test movie poster",
       user_id: "test user id"
     })
-    const getMovie = await movieService.getMovie('test movie id','test user id')
+    const getMovie = await movieService.getMovie(123,'test user id')
     expect(getMovie.message).toBeDefined()
     expect(getMovie.movie).toBeDefined()
     expect(movieRepository.getMovie).toHaveBeenCalled()
@@ -78,9 +78,9 @@ describe('Movie service',() => {
    it("should able to delete movie",async () => {
     movieRepository.deleteMovie.mockResolvedValueOnce({
       id:"test movie id",
-      movie_id:"test movie id",
-      movie_title:"test movie title",
-      movie_poster_id:"test movie poster",
+      movie_id:123,
+      title:"test movie title",
+      poster_path:"test movie poster",
       user_id:"test user id"
     })
     const deleteMovie = await movieService.deleteMovie("test movie id")
@@ -93,7 +93,7 @@ describe('Movie service',() => {
    it("should not able to add movie if user id is not valid",async () => {
       movieRepository.addMovie.mockImplementationOnce(() => Promise.reject(PrismaClientKnownRequestError))
       const createReview = movieService.addMovie({
-        movieId: "test movie id",
+        movieId: 123,
         movieTitle: "test movie title",
         posterId: "test movie poster",
         userId: "false user id"
@@ -103,13 +103,13 @@ describe('Movie service',() => {
    })
    it("should not able to get movie data if user id is not valid",async () => {
     movieRepository.getMovie.mockResolvedValueOnce(null)
-    const getMovie = movieService.getMovie('test movie id','false user id')
+    const getMovie = movieService.getMovie(122,'false user id')
     await expect(getMovie).rejects.toBeInstanceOf(NotFoundException)
     expect(movieRepository.getMovie).toBeCalled()
    })
    it("should not able to get movie data if movie id is not valid",async () => {
     movieRepository.getMovie.mockResolvedValueOnce(null)
-    const getMovie = movieService.getMovie("false movie id","test user id")
+    const getMovie = movieService.getMovie(122,"test user id")
     await expect(getMovie).rejects.toBeInstanceOf(NotFoundException)
     expect(movieRepository.getMovie).toBeCalled()
    })

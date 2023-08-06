@@ -13,8 +13,8 @@ export class MovieService {
       await this.movieRepository.addMovie({
         data:{
           movie_id:data.movieId,
-          movie_poster_id:data.posterId,
-          movie_title:data.movieTitle,
+          title:data.movieTitle,
+          poster_path:data.posterId,
           user:{
             connect:{id:data.userId}
           }
@@ -32,7 +32,7 @@ export class MovieService {
       throw error
     }
   }
-  async getMovie(movieId:string,userId:string){
+  async getMovie(movieId:number,userId:string){
     try {
       const movie = await this.movieRepository.getMovie({
         where:{

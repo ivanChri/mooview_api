@@ -24,7 +24,7 @@ export class TvshowController {
   ){}
   @Get()
   async getTvShow(
-    @Query('tvshowId') tvshowId:string,
+    @Query('tvshowId') tvshowId:number,
     @Query('userId',ParseUUIDPipe) userId:string
   ){
     if(!tvshowId) throw new BadRequestException(`tvshow id must not empty`)
@@ -46,8 +46,8 @@ export class TvshowController {
     const result = await this.tvshowService.deleteTvShow(id)
     await this.historyRecordService.createShowsHistory({
       userId:result.tvshow.user_id,
-      showsId:result.tvshow.id,
-      showsTitle:result.tvshow.tvShow_title,
+      showsId:result.tvshow.tv_id,
+      showsTitle:result.tvshow.title,
       activityId:11
     })
     delete result.tvshow

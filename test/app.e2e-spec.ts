@@ -36,7 +36,7 @@ describe("App e2e",() => {
  describe("movie",() => {
    const dto:MovieDto = {
      userId:process.env.USER_ID,
-     movieId:"test movie id",
+     movieId:123,
      movieTitle:"test movie title",
      posterId:"test movie poster"
    }
@@ -170,7 +170,7 @@ describe("App e2e",() => {
  })
  describe("tvshow",() => {
   const dto:TvshowDto = {
-    tvShowId:"test tv show id",
+    tvShowId:123,
     tvShowTitle:"test tv show title",
     userId:process.env.USER_ID,
     posterId:"test poster id"  
@@ -299,8 +299,6 @@ describe("App e2e",() => {
     })
   })
  })
- //end tvshow route
- //review route
  describe("review",() => {
   const dto:ReviewDto = {
    userId:process.env.USER_ID,
