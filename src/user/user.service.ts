@@ -21,16 +21,16 @@ export class UserService {
           select:{
             id:true,
             movie_id:true,
-            movie_title:true,
-            movie_poster_id:true
+            title:true,
+            poster_path:true
           }
         },
         favoriteTvShow:{
           select:{
             id:true,
-            tvShow_id:true,
-            tvShow_title:true,
-            tvShow_poster_id:true
+            tv_id:true,
+            title:true,
+            poster_path:true
           }
         },
         review:{

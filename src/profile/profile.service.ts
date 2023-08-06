@@ -16,16 +16,16 @@ export class ProfileService {
           select:{
             favoriteMovie:{
               select:{
-                movie_title:true,
+                title:true,
                 movie_id:true,
-                movie_poster_id:true
+                poster_path:true
               }
             },
             favoriteTvShow:{
               select:{
-                tvShow_title:true,
-                tvShow_id:true,
-                tvShow_poster_id:true,
+                title:true,
+                tv_id:true,
+                poster_path:true,
               }
             },
             review:{
