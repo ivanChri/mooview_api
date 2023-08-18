@@ -67,8 +67,13 @@ export class UserService {
     try {
       const user = await this.userRepository.findUser({
         where:{
-          email:data.email
-        }
+          email:data.email,
+          profile:{
+            username:{
+              equals:data.username
+            }
+          }
+        }      
       })
       if(!user) throw new ForbiddenException(`Credentials incorrect`)
       const passwordCompare = await verify(user.password,data.password)

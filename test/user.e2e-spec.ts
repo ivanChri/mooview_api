@@ -345,6 +345,7 @@ describe("User e2e",() => {
       describe("PATCH /user",() => {
         const dto:userUpdateDto = {
           email:"test@gmail.com",
+          username:"test username",
           password:"test password",
           newEmail:"newEmail@gmail.com",
           newPassword:"new password"
@@ -362,6 +363,7 @@ describe("User e2e",() => {
           .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
+            username:dto.username,
             password:dto.password,
             newEmail:dto.newEmail
           })
@@ -373,6 +375,7 @@ describe("User e2e",() => {
           .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
+            username:dto.username,
             password:dto.password,
             newPassword:dto.newPassword
           })
@@ -384,10 +387,22 @@ describe("User e2e",() => {
           .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:"false@gmail.com",
+            username:dto.username,
             password:dto.password,
             newEmail:dto.newEmail
           })
           .expect(403)
+        })
+        it("should throw forbiden exception if username is not valid",() => {
+          return supertest(app.getHttpServer())
+          .patch(`/user/${user_id}`)
+          .set("Authorization",`Bearer ${access_token}`)
+          .send({
+            email:dto.email,
+            username:"false username",
+            password:dto.password,
+            newEmail:dto.newEmail
+          })
         })
         it("should throw forbiden exception if password is not valid",() => {
           return supertest(app.getHttpServer())
@@ -395,6 +410,7 @@ describe("User e2e",() => {
           .set("Authorization",`Bearer ${access_token}`)
           .send({
             email:dto.email,
+            username:dto.username,
             password:"false password",
             newEmail:dto.newEmail
           })

@@ -15,4 +15,7 @@ export class userUpdateDto {
    @IsEmail()
    @IsNotEmpty()
    email:string
+   @IsString()
+   @IsNotEmpty()
+   username:string
 }

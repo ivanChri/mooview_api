@@ -35,6 +35,7 @@ describe("user service",() => {
     const updateUser = await userService.update(process.env.USER_ID,{
       email:"test@gmail.com",
       password:"test password",
+      username:"test username",
       newEmail:"newEmail@gmail.com",
       newPassword:"my new password"
     })
@@ -43,6 +44,7 @@ describe("user service",() => {
   it("should not able to update user email and password if given email is not valid",async () => {
     const updateUser = userService.update(process.env.USER_ID,{
       email:"false@gmail.com",
+      username:"test username",
       password:"my new password",
       newEmail:"updateEmail@gmail.com",
       newPassword:"update password"
@@ -52,7 +54,18 @@ describe("user service",() => {
   it("should not able to update user email and password if given password is not valid",async () => {
     const updateUser = userService.update(process.env.USER_ID,{
       email:"newEmail@gmail.com",
+      username:"test username",
       password:"false password",
+      newEmail:"updateEmail@gmail.com",
+      newPassword:"update password"
+    })
+    await expect(updateUser).rejects.toBeInstanceOf(ForbiddenException)
+  })
+  it("should not able to update user email and password if given username is not valid",async () => {
+    const updateUser = userService.update(process.env.USER_ID,{
+      email:"newEmail@gmail.com",
+      username:"false username",
+      password:"test password",
       newEmail:"updateEmail@gmail.com",
       newPassword:"update password"
     })
